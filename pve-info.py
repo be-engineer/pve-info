@@ -15,7 +15,7 @@ BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
 #blynk = blynklib.Blynk(BLYNK_AUTH, server='2959w71z50.qicp.vip', port=26514)
 
 #如果你无法实现内网穿透，可以取消下面语句的注释，可以实现本地局域网内的访问
-blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080,ssl_cert=None,heartbeat=10, rcv_buffer=1024, log=print)
+blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080)
 
 # last command in example - just to show error handling
 # for certain HW can be added specific commands. 'gpio readall' on PI3b for example
