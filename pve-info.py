@@ -13,45 +13,39 @@ BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
 
 # initialize blynk
 #blynk = blynklib.Blynk(BLYNK_AUTH, server='2959w71z50.qicp.vip', port=26514)
+
 #如果你无法实现内网穿透，可以取消下面语句的注释，可以实现本地局域网内的访问
-blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080)
+blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080,ssl_cert=None,heartbeat=10, rcv_buffer=1024, log=print)
 
 # last command in example - just to show error handling
 # for certain HW can be added specific commands. 'gpio readall' on PI3b for example
-ALLOWED_COMMANDS_LIST = ['ls', 'lsusb', 'ip a', 'ip abc']
+ALLOWED_COMMANDS_LIST = ['ls', 'lsusb', 'ip a', 'ip abc','clear']
 #
 READ_PRINT_MSG = "Read Pin: V{}"
 # create timers dispatcher instance
 timer = blynktimer.Timer() 
  
-#app connect message
-APP_CONNECT_PRINT_MSG = 'App connected'
-APP_DISCONNECT_PRINT_MSG = 'App disconnected'
+#message string
 WRITE_EVENT_PRINT_MSG = "Write Pin: V{} Value: '{}'"
 
-#app connected
-@blynk.handle_event('internal_acon')
-def app_connect_handler(*args):
-    print(APP_CONNECT_PRINT_MSG)
-
+@blynk.handle_event("connect")
+def connect_handler():
+    for pin in range(20):
+        blynk.virtual_sync(pin)
     # 获取本机计算机名称
     hostname = socket.gethostname()
     # 获取本机ip
     ip = socket.gethostbyname(hostname)
-    #print(WRITE_EVENT_PRINT_MSG.format(ip)
+    print(WRITE_EVENT_PRINT_MSG.format(0,hostname+','+ip))
     blynk.virtual_write(0, hostname+','+ip)
     #显示os信息到terminal
-
     os = platform.uname()
     for info in os:
-        #print(WRITE_EVENT_PRINT_MSG.info)
+        print(WRITE_EVENT_PRINT_MSG.format(1,info))
         blynk.virtual_write(1, info)
 
-#app disconnected
-@blynk.handle_event('internal_adis')
-def app_disconnect_handler(*args):
-    print(APP_DISCONNECT_PRINT_MSG)
 
+#显示terminal command执行结果
 @blynk.handle_event('write V1')
 def write_handler(pin, values):
     header = ''
@@ -77,7 +71,7 @@ def write_handler(pin, values):
         print(output)
         blynk.virtual_write(pin, output)
         blynk.virtual_write(pin, '\n')
-
+#
 
 #显示cpu负载率
 @timer.register(vpin_num=4, interval=5, run_once=False)
@@ -101,7 +95,13 @@ def write_to_virtual_pin(vpin_num=1):
 #显示温度    
 
 
-#run loop
-while True:
-    blynk.run()
-    timer.run()
+###########################################################
+# infinite loop that waits for event
+###########################################################
+try:
+    while True:
+        blynk.run()
+        timer.run()
+except KeyboardInterrupt:
+    blynk.disconnect()
+   
