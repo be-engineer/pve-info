@@ -65,7 +65,7 @@ def write_handler(pin, values):
     elif values[0] == 'osinfo':
         header = '[output]\n'
         info = platform.uname()
-        result = '{}\n'.format(info)
+        result = '{}\n'.format('\n'.join(info))
     elif values[0] in ALLOWED_COMMANDS_LIST:
         cmd_params = values[0].split(' ')
         try:
@@ -114,7 +114,6 @@ def write_to_virtual_pin(vpin_num=1):
     blynk.virtual_write(vpin_num, value)
 
 
-'''
 #显示硬盘使用率
 @timer.register(vpin_num=6, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
@@ -136,8 +135,6 @@ def write_to_virtual_pin(vpin_num=1):
     value = psutil.sensors_temperatures()
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
-
-'''
 
 
 #显示网路发送数据
