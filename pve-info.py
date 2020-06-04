@@ -190,8 +190,8 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=15, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # net='{0:.2f} '.format(net / 1024 / 1024 / 1024)
-    net = format(ps.net_io_counters()[0] / 1024 / 1024 / 1024, '.3f')  # TB
-    value = format(float(net), ',')
+    value = format(ps.net_io_counters()[0] / 1024 / 1024 / 1024, '.3f')  # TB
+    #value = format(float(net), ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
@@ -199,8 +199,8 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示网路接收数据
 @timer.register(vpin_num=16, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    net = format(ps.net_io_counters()[1] / 1024 / 1024/1024, '.3f')  # TB
-    value = format(float(net), ',')
+    value = format(ps.net_io_counters()[1] / 1024 / 1024/1024, '.3f')  # TB
+    #value = format(float(net), ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
