@@ -1,5 +1,6 @@
 # coding=utf-8
 # 通过python脚本获取pve服务器的信息，发送到blynk服务器，然后在手机app上实时显示
+# python2.7
 import blynklib
 # import random
 import blynktimer
@@ -188,8 +189,9 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示网路发送数据
 @timer.register(vpin_num=15, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    net = ps.net_io_counters()
-    value = '{0:.1f} '.format(net.bytes_recv / 1024 / 1024)
+    net = ps.net_io_counters()[0]
+    re = '{0:.1f} '.format(net / 1024 / 1024)  # GB
+    re = format(re, ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
@@ -197,8 +199,9 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示网路接收数据
 @timer.register(vpin_num=16, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    net = ps.net_io_counters()
-    value = '{0:.1f} '.format(net.bytes_sent / 1024 / 1024)
+    net = ps.net_io_counters()[1]
+    re = '{0:.1f} '.format(net / 1024 / 1024)  # GB
+    re = format(re, ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
