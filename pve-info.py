@@ -30,7 +30,7 @@ READ_PRINT_MSG = "Read Pin: V{}"
 timer = blynktimer.Timer()
 update_int = 5  # 数据更新间隔，默认为5秒
 # message string
-WRITE_EVENT_PRINT_MSG = "Write Pin: V{} Value: '{}'"
+WRITE_EVENT_PRINT_MSG = "Write Pin: {} Value: '{}'"
 
 
 # 连接到服务器时执行
@@ -42,14 +42,14 @@ def connect_handler():
     hostname = socket.gethostname()
     # 获取本机ip
     ip = socket.gethostbyname(hostname)
-    print(WRITE_EVENT_PRINT_MSG.format(0, ip))
+    print(WRITE_EVENT_PRINT_MSG.format('IP', ip))
     blynk.virtual_write(0, ip)
     # 显示os信息到terminal
     os = pl.uname()
     blynk.virtual_write(2, 'OS info')
     blynk.virtual_write(2, '==============')
     for info in os:
-        print(WRITE_EVENT_PRINT_MSG.format(2, info))
+        print(WRITE_EVENT_PRINT_MSG.format('OS', info))
         blynk.virtual_write(2, info)
     blynk.virtual_write(2, '==============')
 
@@ -94,7 +94,7 @@ def write_handler(pin, values):
 @timer.register(vpin_num=1, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.getloadavg()
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Load', value))
     blynk.virtual_write(vpin_num, value)
 
 
@@ -102,7 +102,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=3, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.cpu_percent()
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('CPU', value))
     blynk.virtual_write(vpin_num, value)
 
 
@@ -111,7 +111,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=4, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.virtual_memory()[2]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Mem', value))
     blynk.virtual_write(vpin_num, value)
 
 # 显示系统硬盘大小
@@ -121,7 +121,7 @@ def write_to_virtual_pin(vpin_num=1):
     re = format(float(sub.check_output(
         ["fdisk", "-s", "/dev/sdb"]))/1024/1024, '.2f')
     value = format(float(re), ',')
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
     blynk.virtual_write(vpin_num, value)
 
 # 显示USB硬盘大小
@@ -131,7 +131,7 @@ def write_to_virtual_pin(vpin_num=1):
     re = format(float(sub.check_output(
         ["fdisk", "-s", "/dev/sda"]))/1024/1024, '.2f')
     value = format(float(re), ',')
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
     blynk.virtual_write(vpin_num, value)
 
 # 显示硬盘使用率
@@ -139,7 +139,7 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率
     value = ps.disk_usage('/')[3]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Disk1%', value))
     blynk.virtual_write(vpin_num, value)
 
 
@@ -147,7 +147,7 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 读取第二块硬盘使用率
     value = ps.disk_usage(ps.disk_partitions()[2][1])[3]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Disk2%', value))
     blynk.virtual_write(vpin_num, value)
 
 
@@ -159,14 +159,14 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=9, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.sensors_temperatures().items()[1][1][2][1]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('tCPU1', value))
     blynk.virtual_write(vpin_num, value)
 
 # cpu 2
 @timer.register(vpin_num=10, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.sensors_temperatures().items()[1][1][3][1]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('tCPU2', value))
     blynk.virtual_write(vpin_num, value)
 
 # 主板温度
@@ -174,7 +174,7 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # ps.sensors_temperatures().items()[0][1][0][1] 或ps.sensors_temperatures().items()[0][1][1][1]
     value = ps.sensors_temperatures().items()[0][1][1][1]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('tBoard', value))
     blynk.virtual_write(vpin_num, value)
 
 # 硬盘温度
@@ -183,7 +183,7 @@ def write_to_virtual_pin(vpin_num=1):
     # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
     re = sub.check_output(['hddtemp', '/dev/sdb'])
     value = re[-7:-4]
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
     blynk.virtual_write(vpin_num, value)
 
 # 显示网路发送数据
@@ -192,7 +192,7 @@ def write_to_virtual_pin(vpin_num=1):
     # net='{0:.2f} '.format(net / 1024 / 1024 / 1024)
     value = format(ps.net_io_counters()[0] / 1024 / 1024 / 1024, '.3f')  # TB
     #value = format(float(net), ',')
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Sent', value))
     blynk.virtual_write(vpin_num, value)
 
 
@@ -201,7 +201,7 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     value = format(ps.net_io_counters()[1] / 1024 / 1024/1024, '.3f')  # TB
     #value = format(float(net), ',')
-    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    print(WRITE_EVENT_PRINT_MSG.format('Rec', value))
     blynk.virtual_write(vpin_num, value)
 
 
