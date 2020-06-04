@@ -190,7 +190,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=15, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     net = ps.net_io_counters()[0]
-    re = '{0:.1f} '.format(net / 1024 / 1024)  # GB
+    re = '{0:.2f} '.format(net / 1024 / 1024/1024)  # TB
     value = format(float(re), ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
@@ -200,7 +200,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=16, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     net = ps.net_io_counters()[1]
-    re = '{0:.1f} '.format(net / 1024 / 1024)  # GB
+    re = '{0:.2f} '.format(net / 1024 / 1024/1024)  # TB
     value = format(float(re), ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
