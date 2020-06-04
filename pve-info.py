@@ -19,7 +19,7 @@ blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080)
 
 # last command in example - just to show error handling
 # for certain HW can be added specific commands. 'gpio readall' on PI3b for example
-ALLOWED_COMMANDS_LIST = ['ls', 'lsusb', 'ip a', 'lspci','clear','lshw','date','df','pveversion','help','free','lshw']
+ALLOWED_COMMANDS_LIST = ['lsusb', 'ip a', 'lspci','clear','lshw','date','df -a','pveversion','help','free','lshw','pveam list local','networkctl']
 #
 READ_PRINT_MSG = "Read Pin: V{}"
 # create timers dispatcher instance
@@ -55,7 +55,10 @@ def write_handler(pin, values):
     header = ''
     result = ''
     delimiter = '{}\n'.format('=' * 30)
-    if values and values[0] in ALLOWED_COMMANDS_LIST:
+    if values[0]=='help':
+        header = '[Allowed commands]\n'
+        result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
+    elif values and values[0] in ALLOWED_COMMANDS_LIST:
         cmd_params = values[0].split(' ')
         try:
             result = subprocess.check_output(cmd_params).decode('utf-8')
@@ -68,6 +71,7 @@ def write_handler(pin, values):
     else:
         header = '[Allowed commands]\n'
         result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
+    
 
     # communicate with terminal if help or some allowed command
     if result:
@@ -97,6 +101,7 @@ def write_to_virtual_pin(vpin_num=1):
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 #显示硬盘使用率
+
 @timer.register(vpin_num=6, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value=psutil.disk_usage('/')[3]
@@ -107,24 +112,26 @@ def write_to_virtual_pin(vpin_num=1):
     value=psutil.disk_usage('/mnt/sdb1')[3]
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)    
+ 
 #显示温度    
 @timer.register(vpin_num=9, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value=psutil.sensors_temperatures()
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value) 
+ 
  #显示网路发送数据    
 @timer.register(vpin_num=11, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     net = psutil.net_io_counters()
-    value = '{0:.2f} Mb'.format(net.bytes_recv / 1024/1024)
+    value = '{0:.1f} '.format(net.bytes_recv / 1024/1024)
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)     
  #显示网路接收数据    
 @timer.register(vpin_num=12, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     net = psutil.net_io_counters()
-    value = '{0:.2f} Mb'.format(net.bytes_sent / 1024/1024)
+    value = '{0:.1f} '.format(net.bytes_sent / 1024/1024)
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)  
 
