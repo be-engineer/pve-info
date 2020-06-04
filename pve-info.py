@@ -1,7 +1,7 @@
 # coding=utf-8
 # 通过python脚本获取pve服务器的信息，发送到blynk服务器，然后在手机app上实时显示
 import blynklib
-#import random
+# import random
 import blynktimer
 import platform as pl  # 查看系统信息
 import psutil as ps  # 查看系统相关参数，如温度，内存等
@@ -12,7 +12,7 @@ import subprocess as sub  # 执行系统命令
 BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
 
 # initialize blynk
-#blynk = blynklib.Blynk(BLYNK_AUTH, server='2959w71z50.qicp.vip', port=26514)
+# blynk = blynklib.Blynk(BLYNK_AUTH, server='2959w71z50.qicp.vip', port=26514)
 
 # 如果你无法实现内网穿透，可以取消下面语句的注释，可以实现本地局域网内的访问
 blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080)
@@ -98,7 +98,7 @@ def write_to_virtual_pin(vpin_num=1):
 
 
 # 显示cpu占用率
-@timer.register(vpin_num=4, interval=update_int, run_once=False)
+@timer.register(vpin_num=3, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.cpu_percent()
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
@@ -107,15 +107,34 @@ def write_to_virtual_pin(vpin_num=1):
 
 # 显示内存使用率
 # @timer.register(vpin_num=4, interval=8, run_once=False)
-@timer.register(vpin_num=update_int, interval=update_int, run_once=False)
+@timer.register(vpin_num=4, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.virtual_memory()[2]
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
+# 显示系统硬盘大小
+@timer.register(vpin_num=5, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    # 读取系统硬盘使用率
+    re = format(float(sub.run(["fdisk", "-s", "/dev/sdb"]))/1024/1024, ',')
+    value = format(float(re), '.2f')
+    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    blynk.virtual_write(vpin_num, value)
+
+# 显示USB硬盘大小
+@timer.register(vpin_num=6, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    # 读取系统硬盘使用率,GB
+    # re = format(float(ps.disk_usage(ps.disk_partitions()[2][1])[
+    #    0])/1024/1024, ',')
+    re = format(float(sub.run(["fdisk", "-s", "/dev/sda"]))/1024/1024, ',')
+    value = format(float(re), '.2f')
+    print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
+    blynk.virtual_write(vpin_num, value)
 
 # 显示硬盘使用率
-@timer.register(vpin_num=6, interval=update_int, run_once=False)
+@timer.register(vpin_num=7, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率
     value = ps.disk_usage('/')[3]
@@ -123,7 +142,7 @@ def write_to_virtual_pin(vpin_num=1):
     blynk.virtual_write(vpin_num, value)
 
 
-@timer.register(vpin_num=7, interval=update_int, run_once=False)
+@timer.register(vpin_num=8, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取第二块硬盘使用率
     value = ps.disk_usage(ps.disk_partitions()[2][1])[3]
@@ -152,7 +171,8 @@ def write_to_virtual_pin(vpin_num=1):
 # 主板温度
 @timer.register(vpin_num=11, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    value = ps.sensors_temperatures().items()[1][1][0][1]
+    # ps.sensors_temperatures().items()[0][1][0][1] 或ps.sensors_temperatures().items()[0][1][1][1]
+    value = ps.sensors_temperatures().items()[0][1][1][1]
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
