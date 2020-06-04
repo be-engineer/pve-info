@@ -118,8 +118,8 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率
     re = format(float(sub.check_output(
-        ["fdisk", "-s", "/dev/sdb"]))/1024/1024, ',')
-    value = format(float(re), '.2f')
+        ["fdisk", "-s", "/dev/sdb"]))/1024/1024, '.2f')
+    value = format(float(re), ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
@@ -128,8 +128,8 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率,GB
     re = format(float(sub.check_output(
-        ["fdisk", "-s", "/dev/sda"]))/1024/1024, ',')
-    value = format(float(re), '.2f')
+        ["fdisk", "-s", "/dev/sda"]))/1024/1024, '.2f')
+    value = format(float(re), ',')
     print(WRITE_EVENT_PRINT_MSG.format(vpin_num, value))
     blynk.virtual_write(vpin_num, value)
 
