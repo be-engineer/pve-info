@@ -41,7 +41,7 @@ def connect_handler():
     #显示os信息到terminal
     os = platform.uname()
     #info=",".join([m for m in os])
-    blynk.virtual_write(2, '系统信息')
+    blynk.virtual_write(2, 'OS info')
     blynk.virtual_write(2, '==============')
     for info in os:
         print(WRITE_EVENT_PRINT_MSG.format(2,info))
