@@ -20,6 +20,3 @@ blynk app的界面显示如下图所示
 ![image](https://github.com/be-engineer/pve-info/blob/master/images/Screenshot_20200605-080619.png)
 
 
-动画显示效果
-![image](https://github.com/be-engineer/pve-info/blob/master/images/GIF-200605_092724.gif)
-
