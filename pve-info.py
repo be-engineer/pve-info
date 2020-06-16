@@ -116,11 +116,11 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=4, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.virtual_memory()[2]
+        value = ps.virtual_memory().percent
         print(WRITE_EVENT_PRINT_MSG.format('Mem', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("get data error ".format(g_err))
+        print("get memory data error ".format(g_err))
 
 
 # 显示系统硬盘大小
@@ -135,7 +135,7 @@ def write_to_virtual_pin(vpin_num=1):
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("No this device ".format(g_err))
+        print("Get sdb data error ".format(g_err))
 
 
 # 显示USB硬盘大小
@@ -150,7 +150,7 @@ def write_to_virtual_pin(vpin_num=1):
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("No this device ".format(g_err))
+        print("Get sda data error ".format(g_err))
 
 
 # 显示硬盘使用率
@@ -158,18 +158,18 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率
     try:
-        value = ps.disk_usage('/')[3]
+        value = ps.disk_usage('/').percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk1%', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("get data error ".format(g_err))
+        print("get disk data error ".format(g_err))
 
 
 @timer.register(vpin_num=8, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取第二块硬盘使用率
     try:
-        value = ps.disk_usage(ps.disk_partitions()[2][1])[3]
+        value = ps.disk_usage(ps.disk_partitions()[2][1]).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2%', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
