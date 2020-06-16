@@ -8,6 +8,7 @@ import platform as pl  # 查看系统信息
 import psutil as ps  # 查看系统相关参数，如温度，内存等
 import socket  # 获取IP地址
 import subprocess as sub  # 执行系统命令
+import time
 
 # blynk server auth code
 BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
@@ -114,25 +115,30 @@ def write_to_virtual_pin(vpin_num=1):
     print(WRITE_EVENT_PRINT_MSG.format('Mem', value))
     blynk.virtual_write(vpin_num, value)
 
+
 # 显示系统硬盘大小
 @timer.register(vpin_num=5, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率
-    re = format(float(sub.check_output(
-        ["fdisk", "-s", "/dev/sdb"]))/1024/1024, '.2f')
+    re = format(
+        float(sub.check_output(["fdisk", "-s", "/dev/sdb"])) / 1024 / 1024,
+        '.2f')
     value = format(float(re), ',')
     print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
     blynk.virtual_write(vpin_num, value)
+
 
 # 显示USB硬盘大小
 @timer.register(vpin_num=6, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取系统硬盘使用率,GB
-    re = format(float(sub.check_output(
-        ["fdisk", "-s", "/dev/sda"]))/1024/1024, '.2f')
+    re = format(
+        float(sub.check_output(["fdisk", "-s", "/dev/sda"])) / 1024 / 1024,
+        '.2f')
     value = format(float(re), ',')
     print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
     blynk.virtual_write(vpin_num, value)
+
 
 # 显示硬盘使用率
 @timer.register(vpin_num=7, interval=update_int, run_once=False)
@@ -155,12 +161,14 @@ def write_to_virtual_pin(vpin_num=1):
 # ps.sensors_temperatures()输出结果
 # {'acpitz': [shwtemp(label='', current=27.8, high=105.0, critical=105.0), shwtemp(label='', current=29.8, high=105.0, critical=105.0)], 'coretemp': [shwtemp(label='Package id 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 1', current=45.0, high=100.0, critical=100.0), shwtemp(label='Package id 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 1', current=45.0, high=100.0, critical=100.0)]}
 
+
 # cpu 1温度
 @timer.register(vpin_num=9, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     value = ps.sensors_temperatures().items()[1][1][2][1]
     print(WRITE_EVENT_PRINT_MSG.format('tCPU1', value))
     blynk.virtual_write(vpin_num, value)
+
 
 # cpu 2
 @timer.register(vpin_num=10, interval=update_int, run_once=False)
@@ -169,6 +177,7 @@ def write_to_virtual_pin(vpin_num=1):
     print(WRITE_EVENT_PRINT_MSG.format('tCPU2', value))
     blynk.virtual_write(vpin_num, value)
 
+
 # 主板温度
 @timer.register(vpin_num=11, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
@@ -176,6 +185,7 @@ def write_to_virtual_pin(vpin_num=1):
     value = ps.sensors_temperatures().items()[0][1][1][1]
     print(WRITE_EVENT_PRINT_MSG.format('tBoard', value))
     blynk.virtual_write(vpin_num, value)
+
 
 # 硬盘温度
 @timer.register(vpin_num=12, interval=update_int, run_once=False)
@@ -186,23 +196,31 @@ def write_to_virtual_pin(vpin_num=1):
     print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
     blynk.virtual_write(vpin_num, value)
 
+
 # 显示网路发送数据
 @timer.register(vpin_num=15, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    # net='{0:.2f} '.format(net / 1024 / 1024 / 1024)
-    value = format(float(ps.net_io_counters()[0])/1024/1024/1024, '.3f')  # TB
-    #value = format(float(net), ',')
-    print(WRITE_EVENT_PRINT_MSG.format('Sent', value))
-    blynk.virtual_write(vpin_num, value)
+    # 获取网络发送流量
+    #value1 = format(float(ps.net_io_counters()[0]) / 1024 / 1024 / 1024, '.3f')  # TB
+    value1 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
+    time.sleep(1)  #wait for 1 second
+    value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
+    print(str('TX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
+    #两次获取的流量相减得到每秒流量
+    blynk.virtual_write(vpin_num, value2 - value1)
 
 
 # 显示网路接收数据
 @timer.register(vpin_num=16, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    value = format(float(ps.net_io_counters()[1])/1024/1024/1024, '.3f')  # TB
-    #value = format(float(net), ',')
-    print(WRITE_EVENT_PRINT_MSG.format('Rec', value))
-    blynk.virtual_write(vpin_num, value)
+    # 获取网络接收流量
+    #value = format(float(ps.net_io_counters()[1]) / 1024 / 1024 / 1024,'.3f')  # TB
+    value1 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
+    time.sleep(1)  #wait for 1 second
+    value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
+    print(str('Recv %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
+    #两次获取的流量相减得到每秒流量
+    blynk.virtual_write(vpin_num, value2 - value1)
 
 
 ###########################################################
