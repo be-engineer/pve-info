@@ -239,7 +239,7 @@ def write_to_virtual_pin(vpin_num=1):
         value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
         print(str('TX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
         # 两次获取的流量相减得到每秒流量
-        blynk.virtual_write(vpin_num, (value2 - valu1)/1024)
+        blynk.virtual_write(vpin_num, (value2 - value1)/1024)
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
