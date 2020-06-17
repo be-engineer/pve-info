@@ -9,6 +9,7 @@ import psutil as ps  # 查看系统相关参数，如温度，内存等
 import socket  # 获取IP地址
 import subprocess as sub  # 执行系统命令
 import time
+import os
 
 # blynk server auth code
 BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
@@ -121,6 +122,17 @@ def write_to_virtual_pin(vpin_num=1):
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
         print("get memory data error ".format(g_err))
+
+
+#get physics disk list
+disk = []
+dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split('\n')
+#result like this
+#['sda    40G disk', 'sdb     5G disk', '']
+dev_list = [i for i in dev_list if (len(str(i)) != 0)]  #remove null cell
+for dev in dev_list:
+    disk.append(dev[0:3])
+#print(disk)  # get each device name like "sda"
 
 
 # 显示系统硬盘大小
