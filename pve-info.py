@@ -125,23 +125,26 @@ def write_to_virtual_pin(vpin_num=1):
 
 
 #get physics disk list
-disk = []
-dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split('\n')
-#result like this
-#['sda    40G disk', 'sdb     5G disk', '']
-dev_list = [i for i in dev_list if (len(str(i)) != 0)]  #remove null cell
-for dev in dev_list:
-    disk.append('/dev/' + dev[0:3])
-#print(disk)  # get each device name like "/dev/sda"
+def get_disk_list():
+    disk = []
+    dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split(
+        '\n')
+    #result like this
+    #['sda    40G disk', 'sdb     5G disk', '']
+    dev_list = [i for i in dev_list if (len(str(i)) != 0)]  #remove null cell
+    for dev in dev_list:
+        disk.append('/dev/' + dev[0:3])
+    #print(disk)  # get each device name like "/dev/sda"
+    return dev_list
 
 
 # 显示系统硬盘大小
 @timer.register(vpin_num=5, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-
+    dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", disk[1]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
@@ -153,10 +156,10 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示USB硬盘大小
 @timer.register(vpin_num=6, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-
+    dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", disk[0]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
@@ -168,9 +171,10 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示硬盘使用率
 @timer.register(vpin_num=7, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
+    dev = get_disk_list()
     # 读取系统硬盘使用率
     try:
-        value = ps.disk_usage(disk[1]).percent
+        value = ps.disk_usage(dev[1]).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -179,9 +183,10 @@ def write_to_virtual_pin(vpin_num=1):
 
 @timer.register(vpin_num=8, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
+    dev = get_disk_list()
     # 读取第二块硬盘使用率
     try:
-        value = ps.disk_usage(disk[0]).percent
+        value = ps.disk_usage(dev[0]).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
