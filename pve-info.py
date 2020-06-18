@@ -70,7 +70,7 @@ def write_handler(pin, values):
         info = pl.uname()
         result = '{}\n'.format('\n'.join(info))
     else:
-        #获取命令参数
+        # 获取命令参数
         cmd_params = values[0].split(' ')
         if cmd_params[0] in ALLOWED_COMMANDS_LIST:
             try:
@@ -245,13 +245,13 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 获取网络发送流量
     try:
-        #value1 = format(float(ps.net_io_counters()[0]) / 1024 / 1024 / 1024, '.3f')  # TB
+        # value1 = format(float(ps.net_io_counters()[0]) / 1024 / 1024 / 1024, '.3f')  # TB
         value1 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
-        time.sleep(1)  #wait for 1 second
+        time.sleep(1)  # wait for 1 second
         value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
         print(str('TX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
-        #两次获取的流量相减得到每秒流量
-        blynk.virtual_write(vpin_num, value2 - value1)
+        # 两次获取的流量相减得到每秒流量
+        blynk.virtual_write(vpin_num, (value2 - value1)/1024)
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
@@ -261,13 +261,13 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 获取网络接收流量
     try:
-        #value = format(float(ps.net_io_counters()[1]) / 1024 / 1024 / 1024,'.3f')  # TB
-        value1 = ps.net_io_counters()['vmbr0'].bytes_recv
-        time.sleep(1)  #wait for 1 second
+        # value = format(float(ps.net_io_counters()[1]) / 1024 / 1024 / 1024,'.3f')  # TB
+        value1 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
+        time.sleep(1)  # wait for 1 second
         value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
-        print(str('Recv %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
-        #两次获取的流量相减得到每秒流量
-        blynk.virtual_write(vpin_num, value2 - value1)
+        print(str('RX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
+        # 两次获取的流量相减得到每秒流量
+        blynk.virtual_write(vpin_num, (value2 - value1)/1024)
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
