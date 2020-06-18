@@ -135,7 +135,7 @@ def get_disk_list():
     for dev in dev_list:
         disk.append('/dev/' + dev[0:3])
     #print(disk)  # get each device name like "/dev/sda"
-    return dev_list
+    return disk
 
 
 # 显示系统硬盘大小
