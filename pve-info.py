@@ -131,7 +131,7 @@ dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split('\n')
 #['sda    40G disk', 'sdb     5G disk', '']
 dev_list = [i for i in dev_list if (len(str(i)) != 0)]  #remove null cell
 for dev in dev_list:
-    disk.append('/dev' + dev[0:3])
+    disk.append('/dev/' + dev[0:3])
 #print(disk)  # get each device name like "/dev/sda"
 
 
@@ -251,7 +251,7 @@ def write_to_virtual_pin(vpin_num=1):
         value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
         print(str('TX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
         # 两次获取的流量相减得到每秒流量
-        blynk.virtual_write(vpin_num, (value2 - value1)/1024)
+        blynk.virtual_write(vpin_num, (value2 - value1) / 1024)
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
@@ -267,7 +267,7 @@ def write_to_virtual_pin(vpin_num=1):
         value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
         print(str('RX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
         # 两次获取的流量相减得到每秒流量
-        blynk.virtual_write(vpin_num, (value2 - value1)/1024)
+        blynk.virtual_write(vpin_num, (value2 - value1) / 1024)
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
