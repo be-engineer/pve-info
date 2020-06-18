@@ -11,27 +11,28 @@ import subprocess as sub  # 执行系统命令
 import time
 import os
 
-disk = []
-dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split('\n')
-dev_list = [i for i in dev_list if (len(str(i)) != 0)]
-#result like this
-#['sda    40G disk', 'sdb     5G disk', '']
-for dev in dev_list:
-    disk.append('/dev/' + dev[0:3])
-print(disk)  # get each device name like "sda"
 
-for d in range(len(disk)):
-    print('disk%d usage:%.2f%%' % (d, ps.disk_usage(disk[d]).percent))
+#获取硬盘名称
+def get_disk():
+    disk = []
+    dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split(
+        '\n')
+    dev_list = [i for i in dev_list if (len(str(i)) != 0)]
+    #result like this
+    #['sda    40G disk', 'sdb     5G disk', '']
+    for dev in dev_list:
+        disk.append('/dev/' + dev[0:3])
+    print(disk)  # get each device name like "sda"
+
+    for d in range(len(disk)):
+        print('disk%d usage:%.2f%%' % (d, ps.disk_usage(disk[d]).percent))
 
 
 #获取网络流量和速率
 def get_io():
-
     key_info = ps.net_io_counters(pernic=True).keys()
-
     recv = {}
     sent = {}
-
     for key in key_info:
         recv.setdefault(key,
                         ps.net_io_counters(pernic=True).get(key).bytes_recv)
@@ -43,18 +44,12 @@ def get_io():
 
 #get all interface total rate
 def get_rate(func):
-
     import time
-
     key_info, old_recv, old_sent = func()
-
     time.sleep(1)
-
     key_info, now_recv, now_sent = func()
-
     net_in = {}
     net_out = {}
-
     for key in key_info:
         # float('%.2f' % a)
         net_in.setdefault(
@@ -67,7 +62,9 @@ def get_rate(func):
     return key_info, net_in, net_out
 
 
+#main loop
 while 1:
+    get_disk()
     try:
         key_info, net_in, net_out = get_rate(get_io)
 
