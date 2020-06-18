@@ -75,7 +75,7 @@ def write_handler(pin, values):
         if cmd_params[0] in ALLOWED_COMMANDS_LIST:
             try:
                 #result = sub.check_output(cmd_params.decode('utf-8'))
-                result = sub.check_output(cmd_params)
+                result = sub.check_output(cmd_params, shell=True)
                 #result = sub.Popen(values[0], shell=True)
                 header = '[output]\n'
             except sub.CalledProcessError as exe_err:
