@@ -202,34 +202,33 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=9, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.sensors_temperatures().items()[1][1][2][1]
+        value = ps.sensors_temperatures().items()[1][1][2].current
         print(WRITE_EVENT_PRINT_MSG.format('tCPU1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("Get sensor error ".format(g_err))
+        print("Get cpu1 temp error ".format(g_err))
 
 
 # cpu 2
 @timer.register(vpin_num=10, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.sensors_temperatures().items()[1][1][3][1]
+        value = ps.sensors_temperatures().items()[1][1][3].current
         print(WRITE_EVENT_PRINT_MSG.format('tCPU2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("Get sensor error ".format(g_err))
+        print("Get cpu2 temp error ".format(g_err))
 
 
 # 主板温度
 @timer.register(vpin_num=11, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    # ps.sensors_temperatures().items()[0][1][0][1] 或ps.sensors_temperatures().items()[0][1][1][1]
     try:
-        value = ps.sensors_temperatures().items()[0][1][1][1]
+        value = ps.sensors_temperatures().items()[0][1][1].current
         print(WRITE_EVENT_PRINT_MSG.format('tBoard', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("Get sensor error ".format(g_err))
+        print("Get board temp error ".format(g_err))
 
 
 # 硬盘温度
@@ -242,7 +241,7 @@ def write_to_virtual_pin(vpin_num=1):
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
-        print("Get sensor error ".format(g_err))
+        print("Get disk temp error ".format(g_err))
 
 
 # 显示网路发送数据
