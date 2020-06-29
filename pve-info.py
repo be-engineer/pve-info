@@ -175,7 +175,8 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     # 读取系统硬盘使用率
     try:
-        value = ps.disk_usage(dev[1]).percent
+        #value = ps.disk_usage(dev[1]).percent
+        value = ps.disk_usage('/').percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -187,7 +188,8 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     # 读取第二块硬盘使用率
     try:
-        value = ps.disk_usage(dev[0]).percent
+        #value = ps.disk_usage(dev[0]).percent
+        value = ps.disk_usage(ps.disk_partitions()[2][1]).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
