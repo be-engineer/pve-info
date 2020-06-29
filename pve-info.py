@@ -63,6 +63,8 @@ def write_handler(pin, values):
     header = ''
     result = ''
     delimiter = '{}\n'.format('=' * 30)
+    input = ''.join(values)
+    cmd = shlex.split(input.strip())
     if values[0] == 'help':
         header = '[Allowed commands]\n'
         result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
@@ -72,10 +74,9 @@ def write_handler(pin, values):
         result = '{}\n'.format('\n'.join(info))
     else:
         # 获取命令参数
-        cmd = shlex.split(values.strip())
         if cmd[0] in ALLOWED_COMMANDS_LIST:
             try:
-                result = sub.check_output(shlex.split(values), shell=False)
+                result = sub.check_output(cmd, shell=False)
                 header = '[output]\n'
             except sub.CalledProcessError as exe_err:
                 header = '[error]\n'
