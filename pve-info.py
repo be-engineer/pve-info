@@ -239,7 +239,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = sub.check_output(['hddtemp', dev[1]])
-        value = re[-7:-4]
+        value = re[-7:-4].strip()  # 去除空格
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
