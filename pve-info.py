@@ -24,7 +24,7 @@ blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080)
 # for certain HW can be added specific commands. 'gpio readall' on PI3b for example
 ALLOWED_COMMANDS_LIST = [
     'lsusb', 'ip', 'lspci', 'lshw', 'date', 'df', 'pveversion', 'help', 'free',
-    'pveam', 'networkctl', 'ls', 'lsb_release', 'cat', 'osinfo', 'cd'
+    'pveam', 'networkctl', 'ls', 'lsb_release', 'cat', 'osinfo', 'lsof', 'dmidecode'
 ]
 #
 READ_PRINT_MSG = "Read Pin: V{}"
@@ -124,17 +124,17 @@ def write_to_virtual_pin(vpin_num=1):
         print("get memory data error ".format(g_err))
 
 
-#get physics disk list
+# get physics disk list
 def get_disk_list():
     disk = []
     dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split(
         '\n')
-    #result like this
+    # result like this
     #['sda    40G disk', 'sdb     5G disk', '']
-    dev_list = [i for i in dev_list if (len(str(i)) != 0)]  #remove null cell
+    dev_list = [i for i in dev_list if (len(str(i)) != 0)]  # remove null cell
     for dev in dev_list:
         disk.append('/dev/' + dev[0:3])
-    #print(disk)  # get each device name like "/dev/sda"
+    # print(disk)  # get each device name like "/dev/sda"
     return disk
 
 
@@ -251,9 +251,9 @@ def write_to_virtual_pin(vpin_num=1):
     # 获取网络发送流量
     try:
         # value1 = format(float(ps.net_io_counters()[0]) / 1024 / 1024 / 1024, '.3f')  # TB
-        value1 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
+        value1 = ps.net_io_counters(pernic=True)['enp2s0'].bytes_sent
         time.sleep(1)  # wait for 1 second
-        value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_sent
+        value2 = ps.net_io_counters(pernic=True)['enp2s0'].bytes_sent
         print(str('TX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
         # 两次获取的流量相减得到每秒流量
         blynk.virtual_write(vpin_num, (value2 - value1) / 1024)
@@ -267,9 +267,9 @@ def write_to_virtual_pin(vpin_num=1):
     # 获取网络接收流量
     try:
         # value = format(float(ps.net_io_counters()[1]) / 1024 / 1024 / 1024,'.3f')  # TB
-        value1 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
+        value1 = ps.net_io_counters(pernic=True)['enp2s0'].bytes_recv
         time.sleep(1)  # wait for 1 second
-        value2 = ps.net_io_counters(pernic=True)['vmbr0'].bytes_recv
+        value2 = ps.net_io_counters(pernic=True)['enp2s0'].bytes_recv
         print(str('RX %.2f' % ((value2 - value1) / 1024)) + ' kB/s')
         # 两次获取的流量相减得到每秒流量
         blynk.virtual_write(vpin_num, (value2 - value1) / 1024)
