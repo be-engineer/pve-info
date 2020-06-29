@@ -10,7 +10,7 @@ import socket  # 获取IP地址
 import subprocess as sub  # 执行系统命令
 import time
 import os
-import shlex  # 使用类似shell的语法分割字符串s
+import shlex  # 使用类似shell的语法分割字符串
 
 # blynk server auth code
 BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
@@ -72,11 +72,10 @@ def write_handler(pin, values):
         result = '{}\n'.format('\n'.join(info))
     else:
         # 获取命令参数
-        cmd_params = shlex.split(values)
-        if cmd_params[0] in ALLOWED_COMMANDS_LIST:
+        cmd = shlex.split(values.strip())
+        if cmd[0] in ALLOWED_COMMANDS_LIST:
             try:
-                result = sub.check_output(cmd_params, shell=False)
-                #result = sub.Popen(values[0], shell=True)
+                result = sub.check_output(shlex.split(values), shell=False)
                 header = '[output]\n'
             except sub.CalledProcessError as exe_err:
                 header = '[error]\n'
