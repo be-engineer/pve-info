@@ -135,6 +135,7 @@ def get_disk_list():
     for dev in dev_list:
         disk.append('/dev/' + dev[0:3])
     # print(disk)  # get each device name like "/dev/sda"
+    # disk returned like ['/dev/sda', '/dev/sdb', '/dev/sdc']
     return disk
 
 
@@ -235,8 +236,9 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=12, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
+    dev = get_disk_list()
     try:
-        re = sub.check_output(['hddtemp', disk[1]])
+        re = sub.check_output(['hddtemp', dev[1]])
         value = re[-7:-4]
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
