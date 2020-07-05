@@ -279,18 +279,11 @@ def write_to_virtual_pin(vpin_num=1):
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
-
-#显示npc连接状态,查看是否掉线,临时测试
+#显示npc连接状态
 @timer.register(vpin_num=13, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     #读取腾讯vps的连接日志
-    log=os.popen("cat /root/app/npc/te.log |grep '[E]'").read().strip().split('\n')[-1]
-    blynk.virtual_write(vpin_num, log)
-
-@timer.register(vpin_num=14, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    #读取hostyun vps的连接日志,获取最后的日志
-    log=os.popen("cat /root/app/npc/host.log |grep '[E]'").read().strip().split('\n')[-1]
+    log=sub.check_output(["cat", "/root/app/npc/te.log|grep '[E]'"]
     blynk.virtual_write(vpin_num, log)
 
 

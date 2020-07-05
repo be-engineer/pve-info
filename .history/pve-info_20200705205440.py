@@ -279,8 +279,7 @@ def write_to_virtual_pin(vpin_num=1):
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
-
-#显示npc连接状态,查看是否掉线,临时测试
+#显示npc连接状态,临时测试
 @timer.register(vpin_num=13, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     #读取腾讯vps的连接日志
