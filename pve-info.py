@@ -280,26 +280,30 @@ def write_to_virtual_pin(vpin_num=1):
         print("Get data error ".format(g_err))
 
 
-#显示npc连接状态,查看是否掉线,临时测试
-#腾讯云139.155.4.138
+# 显示npc连接状态,查看是否掉线,临时测试
+# 腾讯云139.155.4.138
 @timer.register(vpin_num=13, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    #读取腾讯vps的最后断线日志
-    log=os.popen("cat /root/app/npc/te.log |grep '[E]'").read().strip().split('\n')[-1]
+    # 读取腾讯vps的最后断线日志
+    log = os.popen(
+        "cat /root/app/npc/te.log |grep '[E]'").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
-    #读取最新连线日志
-    log=os.popen("cat /root/app/npc/te.log |grep 'Successful '").read().strip().split('\n')[-1]
+    # 读取最新连线日志
+    log = os.popen(
+        "cat /root/app/npc/te.log |grep 'Successful '").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
 
-#hostyun 155.235.58.210
-@timer.register(vpin_num=14, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    #读取hostyun vps最后的断线日志
-    log=os.popen("cat /root/app/npc/host.log |grep '[E]'").read().strip().split('\n')[-1]
-    blynk.virtual_write(vpin_num, log)
-    #读取hostyun vps最后的连线日志
-    log=os.popen("cat /root/app/npc/host.log |grep 'Successful '").read().strip().split('\n')[-1]
-    blynk.virtual_write(vpin_num, log)
+# hostyun 155.235.58.210，经常掉线，没法使用
+# @timer.register(vpin_num=14, interval=update_int, run_once=False)
+# def write_to_virtual_pin(vpin_num=1):
+#    #读取hostyun vps最后的断线日志
+#    log = os.popen(
+#        "cat /root/app/npc/host.log |grep '[E]'").read().strip().split('\n')[-1]
+#    blynk.virtual_write(vpin_num, log)
+    # 读取hostyun vps最后的连线日志
+#    log = os.popen(
+#        "cat /root/app/npc/host.log |grep 'Successful '").read().strip().split('\n')[-1]
+#    blynk.virtual_write(vpin_num, log)
 
 
 ###########################################################
