@@ -25,7 +25,7 @@ blynk = blynklib.Blynk(BLYNK_AUTH, server='139.155.4.138', port=8080)
 # for certain HW can be added specific commands. 'gpio readall' on PI3b for example
 ALLOWED_COMMANDS_LIST = [
     'lsusb', 'ip', 'lspci', 'lshw', 'date', 'df', 'pveversion', 'help', 'free',
-    'pveam', 'networkctl', 'ls', 'lsb_release', 'cat', 'osinfo', 'lsof', 'dmidecode'
+    'pveam', 'networkctl', 'ls', 'lsb_release', 'cat', 'osinfo', 'lsof', 'dmidecode', 'npc'
 ]
 #
 READ_PRINT_MSG = "Read Pin: V{}"
