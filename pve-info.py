@@ -286,11 +286,11 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     # 读取腾讯vps的最后断线日志
     log = os.popen(
-        "cat /root/app/npc/te.log |grep '[E]'").read().strip().split('\n')[-1]
+        "cat /var/log/npc.log |grep '[E]'").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
     # 读取最新连线日志
     log = os.popen(
-        "cat /root/app/npc/te.log |grep 'Successful '").read().strip().split('\n')[-1]
+        "cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
 
 # hostyun 155.235.58.210，经常掉线，没法使用
