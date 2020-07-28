@@ -250,14 +250,14 @@ def write_to_virtual_pin(vpin_num=1):
 
 
 # 主板温度
-@timer.register(vpin_num=11, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    try:
-        value = ps.sensors_temperatures().items()[0][1][1].current
-        print(WRITE_EVENT_PRINT_MSG.format('tBoard', value))
-        blynk.virtual_write(vpin_num, value)
-    except Exception as g_err:
-        print("Get board temp error ".format(g_err))
+#@timer.register(vpin_num=11, interval=update_int, run_once=False)
+#def write_to_virtual_pin(vpin_num=1):
+#    try:
+#        value = ps.sensors_temperatures().items()[0][1][1].current
+#        print(WRITE_EVENT_PRINT_MSG.format('tBoard', value))
+#        blynk.virtual_write(vpin_num, value)
+#    except Exception as g_err:
+#        print("Get board temp error ".format(g_err))
 
 
 # 系统硬盘温度
@@ -323,12 +323,10 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=13, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取腾讯vps的最后断线日志
-    log = os.popen(
-        "cat /var/log/npc.log |grep '[E]'").read().strip().split('\n')[-1]
+    log = os.popen("cat /var/log/npc.log |grep '[E]'").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
     # 读取最新连线日志
-    log = os.popen(
-        "cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
+    log = os.popen("cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
 
 # hostyun 155.235.58.210，经常掉线，没法使用
