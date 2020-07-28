@@ -145,7 +145,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
@@ -154,13 +154,13 @@ def write_to_virtual_pin(vpin_num=1):
         print("Get sdb data error ".format(g_err))
 
 
-# 显示USB硬盘大小
+# 显示500g硬盘大小
 @timer.register(vpin_num=6, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
@@ -168,6 +168,19 @@ def write_to_virtual_pin(vpin_num=1):
     except Exception as g_err:
         print("Get sda data error ".format(g_err))
 
+# 显示4t硬盘大小
+@timer.register(vpin_num=14, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    dev = get_disk_list()
+    try:
+        re = format(
+            float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
+            '.2f')
+        value = format(float(re), ',')
+        print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
+        blynk.virtual_write(vpin_num, value)
+    except Exception as g_err:
+        print("Get sda data error ".format(g_err))
 
 # 显示硬盘使用率
 @timer.register(vpin_num=7, interval=update_int, run_once=False)
@@ -186,10 +199,23 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=8, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
-    # 读取第二块硬盘使用率
+    # 读取500g硬盘使用率
     try:
         #value = ps.disk_usage(dev[0]).percent
-        value = ps.disk_usage(ps.disk_partitions()[2][1]).percent
+        value = ps.disk_usage(ps.disk_partitions()[3][1]).percent
+        print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
+        blynk.virtual_write(vpin_num, value)
+    except Exception as g_err:
+        print("get data error ".format(g_err))
+
+
+@timer.register(vpin_num=17, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    dev = get_disk_list()
+    # 读取4t硬盘使用率
+    try:
+        #value = ps.disk_usage(dev[0]).percent
+        value = ps.disk_usage(ps.disk_partitions()[4][1]).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -234,8 +260,21 @@ def write_to_virtual_pin(vpin_num=1):
         print("Get board temp error ".format(g_err))
 
 
-# 硬盘温度
+# 系统硬盘温度
 @timer.register(vpin_num=12, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
+    dev = get_disk_list()
+    try:
+        re = sub.check_output(['hddtemp', dev[0]])
+        value = re[-7:-4].strip()  # 去除空格
+        print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
+        blynk.virtual_write(vpin_num, value)
+    except Exception as g_err:
+        print("Get disk temp error ".format(g_err))
+
+# 500g硬盘温度
+@timer.register(vpin_num=18, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
     dev = get_disk_list()
@@ -246,7 +285,6 @@ def write_to_virtual_pin(vpin_num=1):
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
         print("Get disk temp error ".format(g_err))
-
 
 # 显示网路发送数据
 @timer.register(vpin_num=15, interval=update_int, run_once=False)
