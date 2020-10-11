@@ -266,7 +266,7 @@ def write_to_virtual_pin(vpin_num=1):
     # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
     dev = get_disk_list()
     try:
-        re = sub.check_output(['hddtemp', dev[0]])
+        re = sub.check_output(['hddtemp', dev[1]])
         value = re[-7:-4].strip()  # 去除空格
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
@@ -279,7 +279,7 @@ def write_to_virtual_pin(vpin_num=1):
     # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
     dev = get_disk_list()
     try:
-        re = sub.check_output(['hddtemp', dev[1]])
+        re = sub.check_output(['hddtemp', dev[2]])
         value = re[-7:-4].strip()  # 去除空格
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
