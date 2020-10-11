@@ -192,12 +192,14 @@ def get_disk_list():
 def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
     try:
-        re = format(
-            float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
-            '.2f')
-        value = format(float(re), ',')
-        print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
-        blynk.virtual_write(vpin_num, value)
+        # re = format(
+        #    float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
+        #    '.2f')
+        #value = format(float(re), ',')
+        #print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
+        print(WRITE_EVENT_PRINT_MSG.format('Disk1', info['/dev/sdb']))
+        #blynk.virtual_write(vpin_num, value)
+        blynk.virtual_write(vpin_num, info['/dev/sdb'])
     except Exception as g_err:
         print("Get sdb data error ".format(g_err))
 
