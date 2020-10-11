@@ -1,6 +1,6 @@
 # coding=utf-8
 # 通过python脚本获取pve服务器的信息，发送到blynk服务器，然后在手机app上实时显示
-# python2.7
+# 运行环境为python3
 import blynklib
 # import random
 import blynktimer
@@ -267,7 +267,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = sub.check_output(['hddtemp', dev[1]])
-        value = re[-7:-4].strip()  # 去除空格
+        value = int(re[-7:-4].strip())  # 去除空格
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -280,7 +280,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = sub.check_output(['hddtemp', dev[2]])
-        value = re[-7:-4].strip()  # 去除空格
+        value = int(re[-7:-4].strip())  # 去除空格
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
