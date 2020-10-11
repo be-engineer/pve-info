@@ -209,12 +209,12 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
     try:
-        re = format(
-            float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
-            '.2f')
-        value = format(float(re), ',')
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
-        blynk.virtual_write(vpin_num, value)
+        # re = format(
+        #    float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
+        #    '.2f')
+        #value = format(float(re), ',')
+        print(WRITE_EVENT_PRINT_MSG.format('Disk2', info['/dev/sdc']))
+        blynk.virtual_write(vpin_num, info['/dev/sdc'])
     except Exception as g_err:
         print("Get sda data error ".format(g_err))
 
@@ -223,12 +223,12 @@ def write_to_virtual_pin(vpin_num=1):
 def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
     try:
-        re = format(
-            float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
-            '.2f')
-        value = format(float(re), ',')
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
-        blynk.virtual_write(vpin_num, value)
+        # re = format(
+        #    float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
+        #    '.2f')
+        #value = format(float(re), ',')
+        print(WRITE_EVENT_PRINT_MSG.format('Disk2', info['/dev/sda']))
+        blynk.virtual_write(vpin_num, info['/dev/sda'])
     except Exception as g_err:
         print("Get sda data error ".format(g_err))
 
@@ -238,7 +238,6 @@ def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
     # 读取系统硬盘使用率
     try:
-        # value = ps.disk_usage(dev[1]).percent
         value = ps.disk_usage('/').percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
         blynk.virtual_write(vpin_num, value)
@@ -251,7 +250,6 @@ def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
     # 读取500g硬盘使用率
     try:
-        # value = ps.disk_usage(dev[0]).percent
         value = ps.disk_usage(ps.disk_partitions()[2].mountpoint).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
@@ -264,9 +262,8 @@ def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
     # 读取4t硬盘使用率
     try:
-        # value = ps.disk_usage(dev[0]).percent
         value = ps.disk_usage(ps.disk_partitions()[4].mountpoint).percent
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
+        print(WRITE_EVENT_PRINT_MSG.format('Disk3', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
         print("get data error ".format(g_err))
