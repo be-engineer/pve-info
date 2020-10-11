@@ -25,7 +25,7 @@ blynk = blynklib.Blynk(BLYNK_AUTH, server='192.168.50.6', port=8080)
 # for certain HW can be added specific commands. 'gpio readall' on PI3b for example
 ALLOWED_COMMANDS_LIST = [
     'lsusb', 'ip', 'lspci', 'lshw', 'date', 'df', 'pveversion', 'help', 'free',
-    'qm', 'networkctl', 'ls', 'lsb_release', 'cat', 'osinfo', 'lsof', 'dmidecode', 'npc'
+    'networkctl', 'ls', 'lsb_release', 'cat', 'osinfo', 'lsof', 'dmidecode', 'npc'
 ]
 #
 READ_PRINT_MSG = "Read Pin: V{}"
@@ -57,6 +57,29 @@ def connect_handler():
     blynk.virtual_write(2, '==============')
 
 
+class Utils(object):
+    __instance = None  # 定义一个类属性做判断
+
+    def __new__(cls):  # 单例模式
+
+        if cls.__instance == None:
+            # 如果__instance为空证明是第一次创建实例
+            # 通过父类的__new__(cls)创建实例
+            cls.__instance = object.__new__(cls)
+            return cls.__instance
+        else:
+            # 返回上一个对象的引用
+            return cls.__instance
+
+    __unit_dict = {
+        '0': 'B',
+        '1': 'K',
+        '2': 'M',
+        '3': 'G',
+        '4': 'T',
+    }
+
+
 # 显示terminal command执行结果
 @blynk.handle_event('write V2')
 def write_handler(pin, values):
@@ -81,10 +104,8 @@ def write_handler(pin, values):
             except sub.CalledProcessError as exe_err:
                 header = '[error]\n' + \
                     'Return Code: {}\n'.format(exe_err.returncode)
-                result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
             except Exception as g_err:
                 print("Command caused '{}'".format(g_err))
-                result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
         else:
             header = '[Allowed commands]\n'
             result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
@@ -126,19 +147,42 @@ def write_to_virtual_pin(vpin_num=1):
         print("get memory data error ".format(g_err))
 
 
-# get physics disk list
+# 获取系统运行时间
+def get_os_info():
+    boot_time = ps.boot_time()
+    return boot_time
+
+
+# get disk info
+def get_disk_info(path='/'):
+    '''
+    获取传入路径下的硬盘信息
+    :param path:
+    :return:
+    '''
+    disk_info = ps.disk_usage(path)
+    disk_data = dict()
+    disk_data['size'] = Utils.__get_unit(disk_info.total)
+    disk_data['available'] = Utils.__get_unit(disk_info.free)
+    disk_data['usage'] = '%.2f%s' % (disk_info.percent, '%')
+    return disk_data
+
+
+# get physics disk list and disk size
 def get_disk_list():
-    disk = []
-    dev_list = os.popen("lsblk -d -o NAME,SIZE,TYPE|grep disk").read().split(
-        '\n')
+    disk_name = []
+    disk_size = []
+    dev_list = os.popen(
+        "lsblk -d -o NAME,SIZE,TYPE|grep disk|awk '{print $1,$2}'").read().strip().split('\n')
     # result like this
-    #['sda    40G disk', 'sdb     5G disk', '']
-    dev_list = [i for i in dev_list if (len(str(i)) != 0)]  # remove null cell
+    #['sda 40G', 'sdb 5G']
     for dev in dev_list:
-        disk.append('/dev/' + dev[0:3])
+        temp = dev.split(' ')
+        disk_name.append('/dev/' + temp[0])
+        disk_size = temp[1]
     # print(disk)  # get each device name like "/dev/sda"
     # disk returned like ['/dev/sda', '/dev/sdb', '/dev/sdc']
-    return disk
+    return disk_name, disk_size
 
 
 # 显示系统硬盘大小
@@ -332,18 +376,6 @@ def write_to_virtual_pin(vpin_num=1):
     log = os.popen(
         "cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
-
-# hostyun 155.235.58.210，经常掉线，没法使用
-# @timer.register(vpin_num=14, interval=update_int, run_once=False)
-# def write_to_virtual_pin(vpin_num=1):
-#    #读取hostyun vps最后的断线日志
-#    log = os.popen(
-#        "cat /root/app/npc/host.log |grep '[E]'").read().strip().split('\n')[-1]
-#    blynk.virtual_write(vpin_num, log)
-    # 读取hostyun vps最后的连线日志
-#    log = os.popen(
-#        "cat /root/app/npc/host.log |grep 'Successful '").read().strip().split('\n')[-1]
-#    blynk.virtual_write(vpin_num, log)
 
 
 ###########################################################
