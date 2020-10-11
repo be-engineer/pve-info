@@ -172,6 +172,7 @@ def get_disk_info(path='/'):
 def get_disk_list():
     disk_name = []
     disk_size = []
+    disk_info = dict()
     dev_list = os.popen(
         "lsblk -d -o NAME,SIZE,TYPE|grep disk|awk '{print $1,$2}'").read().strip().split('\n')
     # result like this
@@ -182,7 +183,8 @@ def get_disk_list():
         disk_size.append(temp[1])
     # print(disk)  # get each device name like "/dev/sda"
     # disk returned like ['/dev/sda', '/dev/sdb', '/dev/sdc']
-    return disk_name, disk_size
+    disk_info = dict(zip(disk_name, disk_size))
+    return disk_name, disk_size, disk_info
 
 
 # 显示系统硬盘大小
