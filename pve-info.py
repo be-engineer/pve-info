@@ -145,7 +145,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
@@ -160,7 +160,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
@@ -174,7 +174,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     try:
         re = format(
-            float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
+            float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
             '.2f')
         value = format(float(re), ',')
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
@@ -202,7 +202,7 @@ def write_to_virtual_pin(vpin_num=1):
     # 读取500g硬盘使用率
     try:
         #value = ps.disk_usage(dev[0]).percent
-        value = ps.disk_usage(ps.disk_partitions()[3][1]).percent
+        value = ps.disk_usage(ps.disk_partitions()[2].mountpoint).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -215,7 +215,7 @@ def write_to_virtual_pin(vpin_num=1):
     # 读取4t硬盘使用率
     try:
         #value = ps.disk_usage(dev[0]).percent
-        value = ps.disk_usage(ps.disk_partitions()[4][1]).percent
+        value = ps.disk_usage(ps.disk_partitions()[4].mountpoint).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -231,7 +231,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=9, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.sensors_temperatures().items()[1][1][2].current
+        value = ps.sensors_temperatures().get('coretemp')[1].current
         print(WRITE_EVENT_PRINT_MSG.format('tCPU1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -242,7 +242,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=10, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.sensors_temperatures().items()[1][1][3].current
+        value = ps.sensors_temperatures().get('coretemp')[2].current
         print(WRITE_EVENT_PRINT_MSG.format('tCPU2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -250,8 +250,8 @@ def write_to_virtual_pin(vpin_num=1):
 
 
 # 主板温度
-#@timer.register(vpin_num=11, interval=update_int, run_once=False)
-#def write_to_virtual_pin(vpin_num=1):
+# @timer.register(vpin_num=11, interval=update_int, run_once=False)
+# def write_to_virtual_pin(vpin_num=1):
 #    try:
 #        value = ps.sensors_temperatures().items()[0][1][1].current
 #        print(WRITE_EVENT_PRINT_MSG.format('tBoard', value))
@@ -323,10 +323,12 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=13, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 读取腾讯vps的最后断线日志
-    log = os.popen("cat /var/log/npc.log |grep '[E]'").read().strip().split('\n')[-1]
+    log = os.popen(
+        "cat /var/log/npc.log |grep '[E]'").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
     # 读取最新连线日志
-    log = os.popen("cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
+    log = os.popen(
+        "cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
     blynk.virtual_write(vpin_num, log)
 
 # hostyun 155.235.58.210，经常掉线，没法使用
