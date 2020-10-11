@@ -79,10 +79,12 @@ def write_handler(pin, values):
                 result = sub.check_output(cmd, shell=False)
                 header = '[output]\n'
             except sub.CalledProcessError as exe_err:
-                header = '[error]\n'
-                result = 'Return Code: {}\n'.format(exe_err.returncode)
+                header = '[error]\n' + \
+                    'Return Code: {}\n'.format(exe_err.returncode)
+                result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
             except Exception as g_err:
                 print("Command caused '{}'".format(g_err))
+                result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
         else:
             header = '[Allowed commands]\n'
             result = '{}\n'.format('\n'.join(ALLOWED_COMMANDS_LIST))
