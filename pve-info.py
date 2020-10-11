@@ -175,11 +175,11 @@ def get_disk_list():
     dev_list = os.popen(
         "lsblk -d -o NAME,SIZE,TYPE|grep disk|awk '{print $1,$2}'").read().strip().split('\n')
     # result like this
-    #['sda 40G', 'sdb 5G']
+    # ['sda 40G', 'sdb 5G']
     for dev in dev_list:
         temp = dev.split(' ')
         disk_name.append('/dev/' + temp[0])
-        disk_size = temp[1]
+        disk_size.append(temp[1])
     # print(disk)  # get each device name like "/dev/sda"
     # disk returned like ['/dev/sda', '/dev/sdb', '/dev/sdc']
     return disk_name, disk_size
@@ -234,7 +234,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     # 读取系统硬盘使用率
     try:
-        #value = ps.disk_usage(dev[1]).percent
+        # value = ps.disk_usage(dev[1]).percent
         value = ps.disk_usage('/').percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
         blynk.virtual_write(vpin_num, value)
@@ -247,7 +247,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     # 读取500g硬盘使用率
     try:
-        #value = ps.disk_usage(dev[0]).percent
+        # value = ps.disk_usage(dev[0]).percent
         value = ps.disk_usage(ps.disk_partitions()[2].mountpoint).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
@@ -260,7 +260,7 @@ def write_to_virtual_pin(vpin_num=1):
     dev = get_disk_list()
     # 读取4t硬盘使用率
     try:
-        #value = ps.disk_usage(dev[0]).percent
+        # value = ps.disk_usage(dev[0]).percent
         value = ps.disk_usage(ps.disk_partitions()[4].mountpoint).percent
         print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
         blynk.virtual_write(vpin_num, value)
