@@ -181,8 +181,8 @@ def get_disk_list():
         temp = dev.split(' ')
         disk_name.append('/dev/' + temp[0])
         disk_size.append(temp[1])
-    # print(disk)  # get each device name like "/dev/sda"
-    # disk returned like ['/dev/sda', '/dev/sdb', '/dev/sdc']
+    # disk_name like ['/dev/sda', '/dev/sdb', '/dev/sdc']
+    # 两个列表转为一个字典
     disk_info = dict(zip(disk_name, disk_size))
     return disk_name, disk_size, disk_info
 
@@ -190,7 +190,7 @@ def get_disk_list():
 # 显示系统硬盘大小
 @timer.register(vpin_num=5, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    dev = get_disk_list()
+    dev, size, info = get_disk_list()
     try:
         re = format(
             float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
@@ -205,7 +205,7 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示500g硬盘大小
 @timer.register(vpin_num=6, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    dev = get_disk_list()
+    dev, size, info = get_disk_list()
     try:
         re = format(
             float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
@@ -219,7 +219,7 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示4t硬盘大小
 @timer.register(vpin_num=14, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    dev = get_disk_list()
+    dev, size, info = get_disk_list()
     try:
         re = format(
             float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
@@ -233,7 +233,7 @@ def write_to_virtual_pin(vpin_num=1):
 # 显示硬盘使用率
 @timer.register(vpin_num=7, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    dev = get_disk_list()
+    dev, size, info = get_disk_list()
     # 读取系统硬盘使用率
     try:
         # value = ps.disk_usage(dev[1]).percent
@@ -246,7 +246,7 @@ def write_to_virtual_pin(vpin_num=1):
 
 @timer.register(vpin_num=8, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    dev = get_disk_list()
+    dev, size, info = get_disk_list()
     # 读取500g硬盘使用率
     try:
         # value = ps.disk_usage(dev[0]).percent
@@ -259,7 +259,7 @@ def write_to_virtual_pin(vpin_num=1):
 
 @timer.register(vpin_num=17, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
-    dev = get_disk_list()
+    dev, size, info = get_disk_list()
     # 读取4t硬盘使用率
     try:
         # value = ps.disk_usage(dev[0]).percent
