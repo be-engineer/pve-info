@@ -197,9 +197,9 @@ def write_to_virtual_pin(vpin_num=1):
         #    '.2f')
         #value = format(float(re), ',')
         #print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
-        print(WRITE_EVENT_PRINT_MSG.format('Disk1', info['/dev/sdb']))
+        print(WRITE_EVENT_PRINT_MSG.format('Disk1', info['/dev/sdc']))
         #blynk.virtual_write(vpin_num, value)
-        blynk.virtual_write(vpin_num, info['/dev/sdb'])
+        blynk.virtual_write(vpin_num, info['/dev/sdc'])
     except Exception as g_err:
         print("Get sdb data error ".format(g_err))
 
@@ -213,8 +213,8 @@ def write_to_virtual_pin(vpin_num=1):
         #    float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
         #    '.2f')
         #value = format(float(re), ',')
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', info['/dev/sdc']))
-        blynk.virtual_write(vpin_num, info['/dev/sdc'])
+        print(WRITE_EVENT_PRINT_MSG.format('Disk2', info['/dev/sdb']))
+        blynk.virtual_write(vpin_num, info['/dev/sdb'])
     except Exception as g_err:
         print("Get sda data error ".format(g_err))
 
