@@ -13,7 +13,7 @@ import os
 import shlex  # 使用类似shell的语法分割字符串
 
 # blynk server auth code
-BLYNK_AUTH = '4TFvpseX3BYmGhPKZ3bSW3XVpBkLBDDB'
+BLYNK_AUTH = 'auth token'
 
 # initialize blynk
 # blynk = blynklib.Blynk(BLYNK_AUTH, server='2959w71z50.qicp.vip', port=26514)
