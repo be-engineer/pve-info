@@ -1,5 +1,5 @@
 # coding=utf-8
-# 通过python脚本获取pve服务器的信息，发送到blynk服务器，然后在手机app上实时显示
+# 通过python脚本获取n3160 pve服务器的信息，发送到blynk服务器，然后在手机app上实时显示
 # 运行环境为python3
 import blynklib
 # import random
@@ -12,8 +12,12 @@ import time
 import os
 import shlex  # 使用类似shell的语法分割字符串
 
+# 需要安装的库
+# pip3 install psutil
+# apt install hddtemp
+
 # blynk server auth code
-BLYNK_AUTH = 'auth token'
+BLYNK_AUTH = '-Wml51TsU73E6fVnVOfL_xaP1ssinawY'
 
 # initialize blynk
 # blynk = blynklib.Blynk(BLYNK_AUTH, server='2959w71z50.qicp.vip', port=26514)
@@ -195,44 +199,18 @@ def write_to_virtual_pin(vpin_num=1):
         # re = format(
         #    float(sub.check_output(["fdisk", "-s", dev[1]])) / 1024 / 1024,
         #    '.2f')
-        #value = format(float(re), ',')
-        #print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
+        # value = format(float(re), ',')
+        # print(WRITE_EVENT_PRINT_MSG.format('Disk1', value))
         print(WRITE_EVENT_PRINT_MSG.format('Disk1', info['/dev/sda']))
-        #blynk.virtual_write(vpin_num, value)
+        # blynk.virtual_write(vpin_num, value)
         blynk.virtual_write(vpin_num, info['/dev/sda'])
     except Exception as g_err:
         print("Get sdb data error ".format(g_err))
 
 
-# 显示500g硬盘大小
-@timer.register(vpin_num=6, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    dev, size, info = get_disk_list()
-    try:
-        # re = format(
-        #    float(sub.check_output(["fdisk", "-s", dev[2]])) / 1024 / 1024,
-        #    '.2f')
-        #value = format(float(re), ',')
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', info['/dev/sdc']))
-        blynk.virtual_write(vpin_num, info['/dev/sdc'])
-    except Exception as g_err:
-        print("Get sda data error ".format(g_err))
-
-# 显示4t硬盘大小
-@timer.register(vpin_num=14, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    dev, size, info = get_disk_list()
-    try:
-        # re = format(
-        #    float(sub.check_output(["fdisk", "-s", dev[0]])) / 1024 / 1024,
-        #    '.2f')
-        #value = format(float(re), ',')
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', info['/dev/sdb']))
-        blynk.virtual_write(vpin_num, info['/dev/sdb'])
-    except Exception as g_err:
-        print("Get sda data error ".format(g_err))
-
 # 显示硬盘使用率
+
+
 @timer.register(vpin_num=7, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     dev, size, info = get_disk_list()
@@ -245,30 +223,6 @@ def write_to_virtual_pin(vpin_num=1):
         print("get disk data error ".format(g_err))
 
 
-@timer.register(vpin_num=8, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    dev, size, info = get_disk_list()
-    # 读取500g硬盘使用率
-    try:
-        value = ps.disk_usage(ps.disk_partitions()[2].mountpoint).percent
-        print(WRITE_EVENT_PRINT_MSG.format('Disk2', value))
-        blynk.virtual_write(vpin_num, value)
-    except Exception as g_err:
-        print("get data error ".format(g_err))
-
-
-@timer.register(vpin_num=17, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    dev, size, info = get_disk_list()
-    # 读取4t硬盘使用率
-    try:
-        value = ps.disk_usage(ps.disk_partitions()[4].mountpoint).percent
-        print(WRITE_EVENT_PRINT_MSG.format('Disk3', value))
-        blynk.virtual_write(vpin_num, value)
-    except Exception as g_err:
-        print("get data error ".format(g_err))
-
-
 # 显示温度
 # ps.sensors_temperatures()输出结果
 # {'acpitz': [shwtemp(label='', current=27.8, high=105.0, critical=105.0), shwtemp(label='', current=29.8, high=105.0, critical=105.0)], 'coretemp': [shwtemp(label='Package id 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 1', current=45.0, high=100.0, critical=100.0), shwtemp(label='Package id 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 0', current=49.0, high=100.0, critical=100.0), shwtemp(label='Core 1', current=45.0, high=100.0, critical=100.0)]}
@@ -278,7 +232,7 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=9, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.sensors_temperatures().get('coretemp')[1].current
+        value = ps.sensors_temperatures().get('coretemp')[0].current
         print(WRITE_EVENT_PRINT_MSG.format('tCPU1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
@@ -289,12 +243,35 @@ def write_to_virtual_pin(vpin_num=1):
 @timer.register(vpin_num=10, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     try:
-        value = ps.sensors_temperatures().get('coretemp')[2].current
+        value = ps.sensors_temperatures().get('coretemp')[1].current
         print(WRITE_EVENT_PRINT_MSG.format('tCPU2', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
         print("Get cpu2 temp error ".format(g_err))
 
+# cpu 3
+
+
+@timer.register(vpin_num=17, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    try:
+        value = ps.sensors_temperatures().get('coretemp')[2].current
+        print(WRITE_EVENT_PRINT_MSG.format('tCPU3', value))
+        blynk.virtual_write(vpin_num, value)
+    except Exception as g_err:
+        print("Get cpu3 temp error ".format(g_err))
+
+# cpu 4
+
+
+@timer.register(vpin_num=18, interval=update_int, run_once=False)
+def write_to_virtual_pin(vpin_num=1):
+    try:
+        value = ps.sensors_temperatures().get('coretemp')[3].current
+        print(WRITE_EVENT_PRINT_MSG.format('tCPU4', value))
+        blynk.virtual_write(vpin_num, value)
+    except Exception as g_err:
+        print("Get cpu4 temp error ".format(g_err))
 
 # 主板温度
 # @timer.register(vpin_num=11, interval=update_int, run_once=False)
@@ -313,27 +290,17 @@ def write_to_virtual_pin(vpin_num=1):
     # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
     dev, size, info = get_disk_list()
     try:
-        re = sub.check_output(['hddtemp', dev[1]])
+        re = sub.check_output(['hddtemp', dev[0]])
         value = int(re[-7:-4].strip())  # 去除空格
         print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
         blynk.virtual_write(vpin_num, value)
     except Exception as g_err:
         print("Get disk temp error ".format(g_err))
 
-# 500g硬盘温度
-@timer.register(vpin_num=18, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    # result '/dev/sdb: Kston 64GB: 36\xc2\xb0C\n'
-    dev, size, info = get_disk_list()
-    try:
-        re = sub.check_output(['hddtemp', dev[2]])
-        value = int(re[-7:-4].strip())  # 去除空格
-        print(WRITE_EVENT_PRINT_MSG.format('tHDD1', value))
-        blynk.virtual_write(vpin_num, value)
-    except Exception as g_err:
-        print("Get disk temp error ".format(g_err))
 
 # 显示网路发送数据
+
+
 @timer.register(vpin_num=15, interval=update_int, run_once=False)
 def write_to_virtual_pin(vpin_num=1):
     # 获取网络发送流量
@@ -364,19 +331,6 @@ def write_to_virtual_pin(vpin_num=1):
     except Exception as g_err:
         print("Get data error ".format(g_err))
 
-
-# 显示npc连接状态,查看是否掉线
-#
-@timer.register(vpin_num=13, interval=update_int, run_once=False)
-def write_to_virtual_pin(vpin_num=1):
-    # 读取腾讯vps的最后断线日志
-    log = os.popen(
-        "cat /var/log/npc.log |grep '[E]'").read().strip().split('\n')[-1]
-    blynk.virtual_write(vpin_num, log)
-    # 读取最新连线日志
-    log = os.popen(
-        "cat /var/log/npc.log |grep 'Successful '").read().strip().split('\n')[-1]
-    blynk.virtual_write(vpin_num, log)
 
 
 ###########################################################
